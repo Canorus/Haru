@@ -1,0 +1,17 @@
+data/*.json
+!data/.gitkeep
+.DS_Store
+node_modules/
+.env
+.env.*
+!.env.example
+haru.env
+.learnings/
+backups/
+*.bak
+*.pem
+*.key
+*.p12
+*.pfx
+*.mobileprovision
+haru-data-export-*.json

@@ -1,0 +1,9 @@
+.git
+.env
+.env.*
+.learnings
+backups
+data/store.json
+node_modules
+test
+.DS_Store

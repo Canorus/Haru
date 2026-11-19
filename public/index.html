@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#f3f0e7">
+  <meta name="description" content="차분하게 오늘을 정리하는 할 일 앱">
+  <script>try{const t=localStorage.getItem('haru-theme');if(t==='dark'||(t!=='light'&&matchMedia('(prefers-color-scheme: dark)').matches))document.documentElement.dataset.theme='dark';else document.documentElement.dataset.theme='light'}catch{}</script>
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css?v=32">
+  <title>Haru — 오늘을 가볍게</title>
+</head>
+<body>
+  <main id="loginView" class="login-shell">
+    <section class="login-copy">
+      <a class="brand brand-large" href="#"><span class="brand-mark">H</span><span>Haru</span></a>
+      <div class="copy-block">
+        <p class="eyebrow">A QUIETER WAY TO GET THINGS DONE</p>
+        <h1>오늘 해야 할 일을,<br><em>가볍게.</em></h1>
+        <p>생각은 빠르게 담고, 중요한 일에만 집중하세요.<br>당신의 하루를 위한 작고 단단한 작업 공간.</p>
+      </div>
+      <div class="login-preview" aria-hidden="true">
+        <div class="preview-card back"></div>
+        <div class="preview-card front"><span class="fake-check done">✓</span><span>아침 산책</span><small>완료</small></div>
+        <div class="preview-card middle"><span class="fake-check"></span><span>프로젝트 제안서 검토</span><b>오늘</b></div>
+      </div>
+    </section>
+    <section class="login-panel">
+      <form id="loginForm" class="login-form">
+        <div><p class="overline">WELCOME BACK</p><h2>다시 만나서 반가워요.</h2><p>계속하려면 계정에 로그인하세요.</p></div>
+        <label>아이디<div class="domain-input"><input id="username" name="username" autocomplete="username" required><span id="domainSuffix">@localhost</span></div></label>
+        <label>비밀번호<input name="password" type="password" autocomplete="current-password" required></label>
+        <div id="loginError" class="form-error" role="alert"></div>
+        <button class="primary-button" type="submit">로그인</button>
+      </form>
+    </section>
+  </main>
+
+  <main id="appView" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="sidebar-head"><a class="brand" href="#"><span class="brand-mark">H</span><span>Haru</span></a><button id="closeSidebar" class="icon-button mobile-only">×</button></div>
+      <nav>
+        <button class="nav-item active" data-filter="all"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5.5" width="16" height="14" rx="2"/><path d="M8 3.5v4M16 3.5v4M4 9.5h16"/></svg></span>오늘 <span id="todayCount" class="count"></span></button>
+        <button class="nav-item" data-filter="upcoming"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 7.5V12l3 2"/></svg></span>예정</button>
+        <button class="nav-item" data-filter="completed"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="m8.5 12 2.2 2.2 4.8-5"/></svg></span>완료</button>
+      </nav>
+      <div id="inboxNavRow" class="list-row hidden"><button id="inboxNav" class="nav-item inbox-nav" data-list=""><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5h16v11H4z"/><path d="M8 7.5 9.5 5h5L16 7.5M8 13h2l1 1h2l1-1h2"/></svg></span><span id="inboxName">수집</span><span id="inboxCount" class="count"></span></button><button id="deleteInboxButton" class="delete-list" type="button" title="리스트 삭제" aria-label="수집 리스트 삭제">×</button></div>
+      <div class="list-heading"><span>LISTS</span><button id="addListButton" class="small-add" title="리스트 추가">＋</button></div>
+      <div id="listNav" class="list-nav"></div>
+      <div class="sidebar-spacer"></div>
+      <button id="settingsButton" class="nav-item"><span class="nav-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h6M14 7h6M4 17h10M18 17h2"/><circle cx="12" cy="7" r="2"/><circle cx="16" cy="17" r="2"/></svg></span>설정</button>
+      <div class="profile"><a id="accountButton" class="account-summary" href="?screen=account" title="계정 정보"><span class="avatar">A</span><span><strong id="profileName"></strong><small id="profileAddress"></small></span></a><button id="logoutButton" title="로그아웃">↗</button></div>
+    </aside>
+    <section class="workspace">
+      <header class="topbar"><button id="openSidebar" class="icon-button mobile-only">☰</button><div class="crumb"><span id="breadcrumb">오늘</span><small id="todayLabel"></small></div><button id="installButton" class="install-button hidden">앱 설치</button><div class="topbar-actions"><button id="syncButton" class="sync-button" type="button" title="지금 동기화"><i></i><span>동기화</span></button><button id="searchButton" class="search-button" type="button" title="태스크와 태그 검색" aria-label="검색"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m15.5 15.5 4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><button id="notificationButton" class="notification-button" type="button" title="알림" aria-label="알림"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M9.7 20a2.5 2.5 0 0 0 4.6 0" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg><b id="notificationBadge" class="hidden">0</b></button></div></header>
+      <div id="taskScreen" class="content">
+        <div class="page-title"><p id="dateEyebrow" class="eyebrow"></p><h1 id="viewTitle">오늘</h1><p id="viewSubtitle">작은 완료가 모여 좋은 하루를 만듭니다.</p></div>
+        <form id="quickAddForm" class="quick-add">
+          <div class="quick-input"><span>＋</span><input id="quickInput" placeholder="할 일  *리스트  !3  #태그  내일" autocomplete="off"></div>
+          <div class="quick-tools">
+            <select id="taskListSelect" aria-label="리스트"></select>
+            <select id="taskPriority" aria-label="우선도"><option value="none">우선도 없음</option><option value="low">낮음</option><option value="medium">보통</option><option value="high">높음</option></select>
+            <select id="taskRepeat" aria-label="반복"><option value="none">반복 없음</option><option value="hourly">매 시간</option><option value="daily">매일</option><option value="weekly">매주</option><option value="monthly">매월</option><option value="yearly">매년</option></select>
+            <select id="repeatWeekday" class="repeat-detail hidden" aria-label="반복 요일"><option value="0">일요일</option><option value="1">월요일</option><option value="2">화요일</option><option value="3">수요일</option><option value="4">목요일</option><option value="5">금요일</option><option value="6">토요일</option></select>
+            <input id="repeatMonthDay" class="repeat-detail hidden" type="number" min="1" max="31" value="1" aria-label="매월 반복 날짜">
+            <span id="repeatYearFields" class="repeat-year repeat-detail hidden"><input id="repeatYearMonth" type="number" min="1" max="12" value="1" aria-label="매년 반복 월"><input id="repeatYearDay" type="number" min="1" max="31" value="1" aria-label="매년 반복 일"></span>
+            <input id="taskDue" type="datetime-local" aria-label="기한">
+            <button type="submit">추가</button>
+          </div>
+        </form>
+        <section class="tasks-section"><div class="section-title"><h2 id="sectionTitle">할 일</h2><span id="taskCount"></span><div class="sort-controls"><select id="taskSortBy" aria-label="정렬 기준"><option value="manual">수동</option><option value="createdAt">등록일</option><option value="due">기한</option><option value="priority">우선도</option><option value="remaining">남은 날짜</option></select><select id="taskSortDirection" aria-label="정렬 방향"><option value="asc">오름차순</option><option value="desc">내림차순</option></select></div></div><div id="taskList" class="task-list"></div></section>
+      </div>
+      <div id="settingsScreen" class="content hidden">
+        <div class="page-title"><p class="eyebrow">개인화 · 동기화 · 데이터</p><h1>설정</h1><p>기본값, 입력 방식, 외부 연동과 저장 데이터를 관리합니다.</p></div>
+        <div class="settings-grid">
+          <section class="settings-card"><div class="settings-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 6.5h14M5 12h14M5 17.5h9"/><circle cx="18" cy="17.5" r="2"/></svg></div><div><h3>태스크 기본값</h3><p>새 태스크를 만들 때 자동으로 적용할 값을 정합니다.</p></div><label>기본 리스트<select id="defaultListSetting"></select></label><label>기본 기한<select id="defaultDueSetting"><option value="none">없음</option><option value="today">오늘</option><option value="tomorrow">내일</option></select></label><label>기본 우선도<select id="defaultPrioritySetting"><option value="none">없음</option><option value="low">낮음</option><option value="medium">보통</option><option value="high">높음</option></select></label></section>
+          <section class="settings-card sync-card"><div class="settings-icon mint"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.5 8A7 7 0 0 0 6 7L4 9M5.5 16A7 7 0 0 0 18 17l2-2"/><path d="M4 5v4h4M20 19v-4h-4"/></svg></div><div><h3>동기화</h3><p>표준 CalDAV 서버의 주소와 계정 정보를 입력합니다. 비밀번호는 서버에서 암호화해 보관합니다.</p></div><label>CalDAV 서버<input id="syncServerSetting" type="url" inputmode="url" autocomplete="url" placeholder="https://dav.example.com"></label><label>CalDAV ID<input id="syncUsernameSetting" autocomplete="username" placeholder="username"></label><label>CalDAV 비밀번호<input id="syncPasswordSetting" type="password" autocomplete="current-password" placeholder="비밀번호"></label><div class="caldav-sync-actions"><button id="caldavSyncButton" class="secondary-button" type="button" disabled>동기화</button><span id="caldavSyncIndicator" class="caldav-sync-indicator setup" aria-label="설정 중" title="설정 중"></span></div><small id="caldavSyncStatus" class="marker-example">서버, ID와 비밀번호를 입력해 주세요.</small></section>
+          <section class="settings-card shortcut-token-card"><div class="settings-icon peach"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="5" width="16" height="14" rx="2"/><path d="m8 10 2 2-2 2M13 15h3"/></svg></div><div><h3>단축어 · MCP · CLI</h3><p>Siri 단축어와 외부 도구가 Haru에 안전하게 접근할 전용 토큰을 발급합니다.</p></div><label class="toggle-row"><span>외부 도구 토큰 사용 <small>끄면 발급된 토큰을 모두 폐기합니다.</small></span><input id="mcpSetting" type="checkbox" class="toggle"></label><div class="shortcut-token-form"><label>토큰 이름<input id="shortcutTokenName" maxlength="50" placeholder="예: iPhone 등록"></label><label>권한<select id="shortcutTokenScope"><option value="write">할 일 등록</option><option value="read">전체 데이터 조회</option></select></label><button id="createShortcutTokenButton" class="secondary-button" type="button">토큰 발급</button></div><small id="shortcutTokenHelp" class="marker-example">외부 도구 토큰 사용을 켜고 설정을 저장한 뒤 발급할 수 있습니다.</small><div id="shortcutTokenList" class="shortcut-token-list"></div><div class="cli-example"><code>python3 cli/todo.py add "제안서 검토" -l 업무 -d tomorrow -p high</code></div></section>
+          <section class="settings-card"><div class="settings-icon theme-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 4a8 8 0 0 1 0 16z"/></svg></div><div><h3>화면 모드</h3><p>운영체제 설정을 따르거나 라이트·다크 모드를 직접 선택합니다.</p></div><label>테마<select id="themeSetting"><option value="system">시스템 설정</option><option value="light">라이트 모드</option><option value="dark">다크 모드</option></select></label></section>
+          <section class="settings-card marker-card"><div class="settings-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4 7 20M17 4l-2 16M4 9h16M3 15h16"/></svg></div><div><h3>입력 마커</h3><p>리스트·우선도·태그 표지를 서로 다른 문자로 설정합니다.</p></div><div class="marker-settings"><label>리스트<select id="listMarkerSetting"></select></label><label>우선도<select id="priorityMarkerSetting"></select></label><label>태그<select id="tagMarkerSetting"></select></label></div><small id="markerExample" class="marker-example"></small><div id="markerError" class="form-error"></div><label class="auto-delete-setting">완료된 할 일 자동 삭제<select id="autoDeleteCompletedSetting"><option value="none">없음</option><option value="daily">매일 · 완료 후 24시간</option><option value="weekly">매주 · 완료 후 7일</option><option value="monthly">매월 · 완료 후 1개월</option><option value="yearly">매년 · 완료 후 1년</option></select><small>보존 기간이 지나면 완료 목록에서도 완전히 삭제됩니다.</small></label></section>
+          <section class="settings-card data-transfer-card"><div class="settings-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h13M15 5l3 3-3 3M19 16H6M9 13l-3 3 3 3"/></svg></div><div><h3>데이터 가져오기 · 내보내기</h3><p>현재 기기에 저장된 리스트와 태스크를 JSON으로 보관하거나 다른 Haru 계정에 복원합니다.</p></div><div class="data-transfer-actions"><button id="exportDataButton" class="secondary-button" type="button">JSON 내보내기</button><button id="importDataButton" class="secondary-button" type="button">JSON 가져오기</button><input id="importDataFile" class="hidden" type="file" accept="application/json,.json"></div><small id="dataTransferStatus" class="marker-example">내보내기 파일에는 기기 시간과 시간대가 metadata로 기록됩니다.</small></section>
+          <section class="settings-card danger-card"><div class="settings-icon danger-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 4 21 20H3z"/><path d="M12 9v5M12 17h.01"/></svg></div><div><h3>데이터 초기화</h3><p>현재 계정의 모든 리스트와 태스크를 영구 삭제하고 빈 수집 리스트로 다시 시작합니다. CalDAV가 연결된 경우 동기화 데이터도 함께 삭제됩니다.</p></div><button id="resetDataButton" class="danger-button" type="button">모든 데이터 초기화</button></section>
+        </div>
+        <button id="saveSettingsButton" class="primary-button settings-save">설정 저장</button>
+      </div>
+      <div id="accountScreen" class="content hidden">
+        <div class="page-title"><p class="eyebrow">계정 · 권한 · 보안</p><h1>계정 정보</h1><p>내 계정과 Haru 사용 현황을 관리하세요.</p></div>
+        <div class="account-page-grid">
+          <section class="account-card account-overview">
+            <div class="account-identity"><div class="avatar account-avatar">A</div><div><strong id="accountUsername"></strong><small id="accountAddress"></small><span id="accountRoleBadge" class="role-badge"></span></div></div>
+            <div class="account-stats"><div><strong id="accountTaskCount">0</strong><span>전체 태스크</span></div><div><strong id="accountListCount">0</strong><span>리스트</span></div><div><strong id="accountCompletedCount">0</strong><span>완료한 태스크</span></div></div>
+            <button id="backToTasksButton" class="account-back" type="button">← 할 일로 돌아가기</button>
+          </section>
+          <section class="account-card account-management">
+            <div><h2>계정 관리</h2><p>비밀번호를 변경하거나 향후 계정 데이터를 이전할 수 있습니다.</p></div>
+            <div class="account-actions"><button id="showPasswordButton" class="account-action" type="button"><span>⌁</span><span><strong>비밀번호 변경</strong><small>계정 비밀번호를 새로 설정합니다.</small></span><b>→</b></button><button id="transferAccountButton" class="account-action" type="button"><span>⇄</span><span><strong>계정 정보 이전</strong><small>다른 Haru 인스턴스로 데이터를 옮깁니다.</small></span><em>준비 중</em></button></div>
+            <form id="passwordForm" class="password-form hidden"><h3>비밀번호 변경</h3><label>현재 비밀번호<input name="currentPassword" type="password" autocomplete="current-password" required></label><label>새 비밀번호<input name="newPassword" type="password" minlength="8" autocomplete="new-password" required></label><label>새 비밀번호 확인<input name="confirmPassword" type="password" minlength="8" autocomplete="new-password" required></label><div id="passwordError" class="form-error"></div><div class="dialog-actions"><button id="cancelPasswordButton" type="button">취소</button><button class="primary-button" type="submit">변경하기</button></div></form>
+          </section>
+          <section id="adminAccountPanel" class="account-card account-admin hidden">
+            <div class="account-admin-head"><div><h2>계정과 권한</h2><p>새 계정을 만들고 admin · user · guest 권한을 관리합니다.</p></div><button id="addAccountButton" class="primary-button" type="button">＋ 계정 추가</button></div>
+            <div id="accountUsers" class="account-users"></div>
+            <div class="admin-relinquish"><div><strong>admin 권한 포기</strong><small>다른 admin이 있는 경우에만 자신의 권한을 내려놓을 수 있습니다.</small></div><button id="relinquishAdminButton" class="danger-button" type="button">admin 권한 포기</button></div>
+          </section>
+          <section id="collaborationAccountPanel" class="account-card account-admin">
+            <div class="account-admin-head"><div><h2>협업 권한</h2><p>승인된 공유 리스트와 참여자를 관리합니다.</p></div></div>
+            <div id="accountCollaborations" class="account-users"></div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <dialog id="listDialog"><form id="listForm" method="dialog"><div class="dialog-icon">＋</div><h2>새 리스트 만들기</h2><p id="listDialogCopy">새로운 공간에 할 일을 모아보세요.</p><label>리스트 이름<input id="newListName" maxlength="40" placeholder="예: 장보기" required></label><div class="dialog-actions"><button type="button" data-close>취소</button><button class="primary-button" type="submit">만들기</button></div></form></dialog>
+  <dialog id="resetDataDialog" class="danger-dialog"><form id="resetDataForm"><div class="dialog-icon danger-icon">!</div><h2>모든 데이터를 초기화할까요?</h2><p>이 작업은 되돌릴 수 없습니다. 모든 리스트와 태스크가 삭제되며 CalDAV가 연결된 경우 동기화 데이터도 함께 삭제됩니다.</p><label>현재 비밀번호<input name="password" type="password" autocomplete="current-password" required></label><label>확인을 위해 <strong>초기화</strong> 입력<input name="confirmation" autocomplete="off" required></label><div id="resetDataError" class="form-error"></div><div class="dialog-actions"><button id="cancelResetDataButton" type="button">취소</button><button class="danger-button" type="submit">영구 삭제 및 초기화</button></div></form></dialog>
+  <dialog id="createAccountDialog" class="account-create-dialog"><form id="createAccountForm"><div class="dialog-icon">＋</div><h2>새 계정 만들기</h2><p>임시 비밀번호가 자동 생성되며 새 사용자는 첫 로그인 후 직접 변경해야 합니다.</p><label>사용자명<input name="username" minlength="2" maxlength="40" autocomplete="off" required></label><label>권한<select name="role"><option value="user">user</option><option value="guest">guest</option><option value="admin">admin</option></select></label><div id="createAccountError" class="form-error"></div><div id="temporaryPasswordResult" class="temporary-password hidden"><small>한 번만 표시되는 임시 비밀번호</small><code id="temporaryPassword"></code><button id="copyTemporaryPassword" type="button">복사</button></div><div class="dialog-actions"><button id="cancelCreateAccountButton" type="button">닫기</button><button id="createAccountSubmit" class="primary-button" type="submit">계정 생성</button></div></form></dialog>
+  <dialog id="relinquishAdminDialog" class="danger-dialog"><form id="relinquishAdminForm"><div class="dialog-icon danger-icon">!</div><h2>admin 권한을 포기할까요?</h2><p>다른 admin이 최소 한 명 있어야 하며, 포기한 뒤에는 다른 admin이 다시 권한을 부여해야 합니다.</p><label>변경할 권한<select name="role"><option value="user">user</option><option value="guest">guest</option></select></label><label>현재 비밀번호<input name="password" type="password" autocomplete="current-password" required></label><div id="relinquishAdminError" class="form-error"></div><div class="dialog-actions"><button id="cancelRelinquishAdminButton" type="button">취소</button><button class="danger-button" type="submit">권한 포기</button></div></form></dialog>
+  <dialog id="notificationDialog" class="notification-dialog"><div class="notification-head"><div><p class="eyebrow">협업 · 기한</p><h2>알림</h2></div><button id="closeNotificationButton" class="icon-button" type="button" aria-label="닫기">×</button></div><div class="notification-toolbar"><button id="readAllNotificationsButton" type="button">모든 알림 확인</button><button id="removeAllNotificationsButton" type="button">모든 알림 제거</button></div><div id="notificationList" class="notification-list"></div></dialog>
+  <dialog id="searchDialog" class="search-dialog"><div class="notification-head"><div><p class="eyebrow">태스크 · 태그</p><h2>검색</h2></div><button id="closeSearchButton" class="icon-button" type="button" aria-label="닫기">×</button></div><label class="search-field"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="m15.5 15.5 4 4" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg><input id="searchInput" type="search" autocomplete="off" placeholder="태스크 또는 #태그 검색" aria-label="태스크 또는 태그 검색"></label><div id="searchResults" class="search-results"></div></dialog>
+  <dialog id="editTaskDialog" class="task-edit-dialog"><form id="editTaskForm"><input id="editTaskId" type="hidden"><div class="dialog-icon">✎</div><h2>태스크 편집</h2><p>할 일의 내용과 세부 설정을 변경하세요.</p><label>제목<input id="editTaskTitle" maxlength="500" autocomplete="off" required></label><label>메모<textarea id="editTaskNotes" maxlength="5000" rows="3" placeholder="필요한 내용을 덧붙이세요."></textarea></label><div class="task-edit-grid"><label>리스트<select id="editTaskList"></select></label><label>우선도<select id="editTaskPriority"><option value="none">없음</option><option value="low">낮음</option><option value="medium">보통</option><option value="high">높음</option></select></label><label>기한<input id="editTaskDue" type="datetime-local"></label><label>반복<select id="editTaskRepeat"><option value="none">반복 없음</option><option value="hourly">매 시간</option><option value="daily">매일</option><option value="weekly">매주</option><option value="monthly">매월</option><option value="yearly">매년</option></select></label></div><div id="editTaskRepeatDetails" class="task-edit-repeat hidden"><label id="editTaskWeekdayWrap">요일<select id="editTaskWeekday"><option value="0">일요일</option><option value="1">월요일</option><option value="2">화요일</option><option value="3">수요일</option><option value="4">목요일</option><option value="5">금요일</option><option value="6">토요일</option></select></label><label id="editTaskMonthDayWrap">날짜<input id="editTaskMonthDay" type="number" min="1" max="31" value="1"></label><div id="editTaskYearWrap" class="task-edit-year"><label>월<input id="editTaskYearMonth" type="number" min="1" max="12" value="1"></label><label>일<input id="editTaskYearDay" type="number" min="1" max="31" value="1"></label></div></div><label>태그<input id="editTaskTags" autocomplete="off" placeholder="쉼표로 구분 (예: 업무, 검토)"></label><div id="editTaskError" class="form-error"></div><div class="dialog-actions"><button id="cancelEditTaskButton" type="button">취소</button><button class="primary-button" type="submit">변경사항 저장</button></div></form></dialog>
+  <dialog id="dueConfirmDialog" class="due-confirm-dialog"><div class="dialog-icon">◷</div><h2>기한으로 해석할까요?</h2><p><strong id="duePhrase"></strong> 표현이 날짜를 뜻하는지 확인해 주세요.</p><div class="due-preview"><span>태스크</span><strong id="dueSuggestedTitle"></strong><span>제안 기한</span><strong id="dueSuggestedDate"></strong></div><div class="dialog-actions"><button id="keepDueAsTextButton" type="button">내용으로 유지</button><button id="acceptDueButton" class="primary-button" type="button">기한으로 적용</button></div></dialog>
+  <dialog id="deleteListDialog" class="danger-dialog"><form id="deleteListForm"><div class="dialog-icon danger-icon">!</div><h2>리스트를 삭제할까요?</h2><p><strong id="deleteListName"></strong> 리스트와 안에 있는 태스크 <strong id="deleteListTaskCount"></strong>개가 모두 삭제됩니다. 이 작업은 되돌릴 수 없습니다.</p><label>확인을 위해 리스트 이름 입력<input id="deleteListConfirmation" name="confirmation" autocomplete="off" required></label><div id="deleteListError" class="form-error"></div><div class="dialog-actions"><button id="cancelDeleteListButton" type="button">취소</button><button class="danger-button" type="submit">리스트와 태스크 삭제</button></div></form></dialog>
+  <dialog id="shortcutTokenDialog" class="shortcut-token-dialog"><div class="dialog-icon">⌁</div><h2>토큰이 발급되었습니다</h2><p>이 값은 지금 한 번만 표시됩니다. 단축어의 토큰 설정에 직접 붙여 넣으세요.</p><code id="shortcutTokenValue"></code><div class="dialog-actions"><button id="copyShortcutTokenButton" type="button">토큰 복사</button><button id="closeShortcutTokenButton" class="primary-button" type="button">완료</button></div></dialog>
+  <div id="toast" class="toast" role="status"></div>
+  <script src="app.js?v=32" defer></script>
+</body>
+</html>

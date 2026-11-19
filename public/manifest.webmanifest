@@ -1,0 +1,11 @@
+{
+  "name": "Haru — 오늘을 가볍게",
+  "short_name": "Haru",
+  "description": "차분하게 오늘을 정리하는 할 일 앱",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "background_color": "#f3f0e7",
+  "theme_color": "#f3f0e7",
+  "icons": [{"src":"icon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}]
+}

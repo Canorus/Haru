@@ -1,0 +1,20 @@
+services:
+  haru:
+    build: .
+    container_name: haru
+    restart: unless-stopped
+    network_mode: host
+    environment:
+      HOST: ${HARU_HOST:-127.0.0.1}
+      PORT: ${HARU_PORT:-3000}
+      BASE_PATH: ${BASE_PATH:-/haru}
+      INSTANCE_DOMAIN: ${INSTANCE_DOMAIN:-localhost}
+      HARU_INITIAL_ADMIN_PASSWORD: ${HARU_INITIAL_ADMIN_PASSWORD:-}
+      TZ: ${TZ:-Asia/Seoul}
+      CALDAV_UPSTREAM: ${CALDAV_UPSTREAM:-}
+      CALDAV_USERNAME: ${CALDAV_USERNAME:-}
+      CALDAV_PASSWORD: ${CALDAV_PASSWORD:-}
+      CALDAV_APP_USER: ${CALDAV_APP_USER:-admin}
+      HARU_CREDENTIAL_KEY: ${HARU_CREDENTIAL_KEY:-}
+    volumes:
+      - ${HARU_DATA_DIR:-./data}:/app/data

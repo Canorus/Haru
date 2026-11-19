@@ -1,0 +1,14 @@
+[Unit]
+Description=SSH tunnel to Haru
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=deploy
+ExecStart=/usr/bin/ssh -NT -L 127.0.0.1:3310:127.0.0.1:3000 -p 22 -o BatchMode=yes -o ExitOnForwardFailure=yes -o ServerAliveInterval=30 -o ServerAliveCountMax=3 deploy@app.example.com
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
